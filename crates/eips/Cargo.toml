@@ -61,6 +61,9 @@ arbitrary = { workspace = true, features = ["derive"], optional = true }
 # borsh
 borsh = { workspace = true, optional = true, features = ["derive"] }
 
+# rkyv
+rkyv = { version = "0.8", features = ["std"], optional = true }
+
 # misc
 auto_impl.workspace = true
 
@@ -90,7 +93,7 @@ std = [
 	"sha2?/std",
 	"either/std",
 	"serde_with?/std",
-	"borsh?/std"
+	"borsh?/std",
 ]
 serde = [
 	"dep:alloy-serde",
@@ -122,7 +125,7 @@ arbitrary = [
 	"alloy-eip7702/arbitrary",
 	"alloy-eip7702/k256",
 	"alloy-eip7928/arbitrary",
-	"c-kzg?/arbitrary"
+	"c-kzg?/arbitrary",
 ]
 borsh = [
 	"dep:borsh",
@@ -130,3 +133,4 @@ borsh = [
 	"alloy-eip2930/borsh",
 	"alloy-eip7702/borsh",
 ]
+rkyv = ["dep:rkyv", "alloy-primitives/rkyv"]
