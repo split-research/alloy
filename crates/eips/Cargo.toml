@@ -133,4 +133,12 @@ borsh = [
 	"alloy-eip2930/borsh",
 	"alloy-eip7702/borsh",
 ]
-rkyv = ["dep:rkyv", "alloy-primitives/rkyv"]
+rkyv = [
+	"dep:rkyv",
+	"alloy-primitives/rkyv",
+	"alloy-eip2124/rkyv",
+	"alloy-eip2930/rkyv",
+	"alloy-eip7702/rkyv",
+	"alloy-eip7928/rkyv",
+	"alloy-serde/rkyv",
+]

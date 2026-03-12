@@ -27,6 +27,9 @@ alloy-primitives = { workspace = true, features = ["serde", "map"] }
 serde.workspace = true
 serde_json = { workspace = true, features = ["alloc"] }
 
+# rkyv
+rkyv = { workspace = true, optional = true }
+
 # arbitrary
 arbitrary = { workspace = true, features = ["derive"], optional = true }
 
@@ -46,3 +49,4 @@ similar-asserts.workspace = true
 default = ["std"]
 std = ["alloy-primitives/std", "serde/std", "serde_json/std"]
 arbitrary = ["dep:arbitrary", "alloy-primitives/arbitrary", "std"]
+rkyv = ["dep:rkyv"]

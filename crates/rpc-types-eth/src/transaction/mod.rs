@@ -49,6 +49,7 @@ pub mod serde_bincode_compat {
         bound = "T: TransactionTrait + Clone + serde::Serialize + serde::de::DeserializeOwned"
     )
 )]
+#[cfg_attr(feature = "rkyv", derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize))]
 #[doc(alias = "Tx")]
 pub struct Transaction<T = TxEnvelope> {
     /// The inner transaction object

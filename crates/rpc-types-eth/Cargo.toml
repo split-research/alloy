@@ -111,4 +111,6 @@ rkyv = [
 	"alloy-primitives/rkyv",
 	"alloy-consensus/rkyv",
 	"alloy-eips/rkyv",
+	"alloy-serde?/rkyv",
+	"alloy-network-primitives/rkyv",
 ]

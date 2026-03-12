@@ -482,6 +482,7 @@ impl TryFrom<EthereumTxEnvelope<TxEip4844Variant<alloy_eips::eip4844::BlobTransa
     typed = EthereumTypedTransaction,
     arbitrary_cfg(feature = "arbitrary")
 )]
+#[cfg_attr(feature = "rkyv", derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize))]
 #[doc(alias = "TransactionEnvelope")]
 pub enum EthereumTxEnvelope<Eip4844> {
     /// An untagged [`TxLegacy`].
@@ -740,7 +741,7 @@ impl<Eip4844: RlpEcdsaEncodableTx> EthereumTxEnvelope<Eip4844> {
     }
 
     /// Consumes the type and returns the [`TxEip1559`] variant if the transaction is an EIP-1559
-    /// transaction. Returns an error otherwise.    
+    /// transaction. Returns an error otherwise.
     pub fn try_into_eip1559(self) -> Result<Signed<TxEip1559>, ValueError<Self>> {
         match self {
             Self::Eip1559(tx) => Ok(tx),

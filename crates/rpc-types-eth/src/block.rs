@@ -20,6 +20,7 @@ pub use alloy_eips::{
 #[derive(Clone, Debug, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "serde", serde(rename_all = "camelCase"))]
+#[cfg_attr(feature = "rkyv", derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize))]
 pub struct Block<T = Transaction<TxEnvelope>, H = Header> {
     /// Header of the block.
     #[cfg_attr(feature = "serde", serde(flatten))]
@@ -379,6 +380,7 @@ where
 #[derive(Clone, Debug, Default, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "serde", serde(rename_all = "camelCase"))]
+#[cfg_attr(feature = "rkyv", derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize))]
 pub struct Header<H = alloy_consensus::Header> {
     /// Hash of the block
     pub hash: BlockHash,

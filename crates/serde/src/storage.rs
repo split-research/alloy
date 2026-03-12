@@ -27,6 +27,7 @@ use serde::{Deserialize, Deserializer, Serialize};
 /// The contained [B256] and From implementation for String are used to preserve the input and
 /// implement this behavior from geth.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize, Serialize)]
+#[cfg_attr(feature = "rkyv", derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize))]
 #[serde(untagged)]
 pub enum JsonStorageKey {
     /// A full 32-byte key (tried first during deserialization)

@@ -136,4 +136,9 @@ serde = [
 ]
 serde-bincode-compat = ["alloy-eips/serde-bincode-compat", "serde_with"]
 borsh = ["dep:borsh", "alloy-primitives/borsh", "alloy-eips/borsh"]
-rkyv = ["dep:rkyv", "alloy-primitives/rkyv", "alloy-eips/rkyv"]
+rkyv = [
+	"dep:rkyv",
+	"alloy-primitives/rkyv",
+	"alloy-eips/rkyv",
+	"alloy-serde/rkyv",
+]

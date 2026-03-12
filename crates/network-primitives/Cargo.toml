@@ -14,9 +14,9 @@ exclude.workspace = true
 [package.metadata.docs.rs]
 all-features = true
 rustdoc-args = [
-    "-Zunstable-options",
-    "--generate-link-to-definition",
-    "--show-type-layout",
+	"-Zunstable-options",
+	"--generate-link-to-definition",
+	"--show-type-layout",
 ]
 
 [lints]
@@ -30,6 +30,10 @@ alloy-consensus = { workspace = true, features = ["serde"] }
 
 serde = { workspace = true, optional = true }
 
+# rkyv
+rkyv = { version = "0.8", features = ["std"], optional = true }
+
+
 [dev-dependencies]
 
 [features]
@@ -39,11 +43,12 @@ std = [
 	"alloy-consensus/std",
 	"alloy-eips/std",
 	"alloy-serde/std",
-	"serde/std"
+	"serde/std",
 ]
 serde = [
 	"dep:serde",
 	"alloy-consensus/serde",
 	"alloy-eips/serde",
-	"alloy-primitives/serde"
+	"alloy-primitives/serde",
 ]
+rkyv = ["dep:rkyv"]

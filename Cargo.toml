@@ -156,6 +156,9 @@ serde_with = { version = "3", default-features = false, features = ["macros"] }
 # bincode
 bincode = "2.0"
 
+# rkyv
+rkyv = { version = "0.8", default-features = false }
+
 # misc
 auto_impl = "1.2"
 base64 = "0.22"
