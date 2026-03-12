@@ -5,7 +5,11 @@ use alloy_rlp::{Buf, BufMut, Decodable, Encodable, Error, Header};
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 #[cfg_attr(any(test, feature = "arbitrary"), derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "borsh", derive(borsh::BorshSerialize, borsh::BorshDeserialize))]
-#[cfg_attr(feature = "rkyv", derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize))]
+#[cfg_attr(
+    feature = "rkyv",
+    derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize),
+    rkyv(derive(Debug))
+)]
 pub enum Eip658Value {
     /// A boolean `statusCode` introduced by [EIP-658].
     ///

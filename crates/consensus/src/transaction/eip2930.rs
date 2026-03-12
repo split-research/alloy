@@ -12,7 +12,11 @@ use alloy_rlp::{BufMut, Decodable, Encodable};
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "serde", serde(rename_all = "camelCase"))]
 #[cfg_attr(feature = "borsh", derive(borsh::BorshSerialize, borsh::BorshDeserialize))]
-#[cfg_attr(feature = "rkyv", derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize))]
+#[cfg_attr(
+    feature = "rkyv",
+    derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize),
+    rkyv(derive(Debug))
+)]
 #[doc(alias = "Eip2930Transaction", alias = "TransactionEip2930", alias = "Eip2930Tx")]
 pub struct TxEip2930 {
     /// Added as EIP-pub 155: Simple replay attack protection

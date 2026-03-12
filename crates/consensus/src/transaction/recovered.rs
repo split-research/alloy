@@ -12,7 +12,11 @@ use derive_more::{AsRef, Deref};
 #[derive(Debug, Clone, Copy, PartialEq, Hash, Eq, AsRef, Deref)]
 #[cfg_attr(feature = "arbitrary", derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "rkyv", derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize))]
+#[cfg_attr(
+    feature = "rkyv",
+    derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize),
+    rkyv(derive(Debug))
+)]
 pub struct Recovered<T> {
     /// Signer of the type
     signer: Address,

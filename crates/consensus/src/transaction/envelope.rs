@@ -482,7 +482,11 @@ impl TryFrom<EthereumTxEnvelope<TxEip4844Variant<alloy_eips::eip4844::BlobTransa
     typed = EthereumTypedTransaction,
     arbitrary_cfg(feature = "arbitrary")
 )]
-#[cfg_attr(feature = "rkyv", derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize))]
+#[cfg_attr(
+    feature = "rkyv",
+    derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize),
+    rkyv(derive(Debug))
+)]
 #[doc(alias = "TransactionEnvelope")]
 pub enum EthereumTxEnvelope<Eip4844> {
     /// An untagged [`TxLegacy`].

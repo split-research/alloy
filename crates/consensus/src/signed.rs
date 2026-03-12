@@ -23,7 +23,11 @@ use std::sync::OnceLock;
 
 /// A transaction with a signature and hash seal.
 #[derive(Debug, Clone)]
-#[cfg_attr(feature = "rkyv", derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize))]
+#[cfg_attr(
+    feature = "rkyv",
+    derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize),
+    rkyv(derive(Debug))
+)]
 pub struct Signed<T, Sig = Signature> {
     #[doc(alias = "transaction")]
     tx: T,
