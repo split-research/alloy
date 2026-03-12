@@ -30,7 +30,10 @@ alloy-core.workspace = true
 alloy-consensus = { workspace = true, optional = true }
 alloy-contract = { workspace = true, optional = true }
 alloy-eips = { workspace = true, optional = true }
-alloy-ens = { workspace = true, optional = true, features = ["contract", "provider"] }
+alloy-ens = { workspace = true, optional = true, features = [
+    "contract",
+    "provider",
+] }
 alloy-genesis = { workspace = true, optional = true }
 alloy-network = { workspace = true, optional = true }
 alloy-node-bindings = { workspace = true, optional = true }
@@ -284,10 +287,7 @@ signer-mnemonic-all-languages = [
     "alloy-signer-local?/mnemonic-all-languages",
 ]
 signer-yubihsm = ["signer-local", "alloy-signer-local?/yubihsm"]
-secp256k1 = [
-	"alloy-consensus?/secp256k1",
-	"alloy-signer-local?/secp256k1"
-]
+secp256k1 = ["alloy-consensus?/secp256k1", "alloy-signer-local?/secp256k1"]
 # transports
 transports = ["dep:alloy-transport"]
 transport-http = ["transports", "dep:alloy-transport-http"]
@@ -358,3 +358,9 @@ arbitrary = [
     "alloy-trie?/arbitrary",
 ]
 postgres = ["alloy-core/postgres"]
+rkyv = [
+    "alloy-core/rkyv",
+    "alloy-consensus?/rkyv",
+    "alloy-eips?/rkyv",
+    "alloy-rpc-types?/rkyv",
+]
