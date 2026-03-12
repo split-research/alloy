@@ -12,6 +12,7 @@ use alloy_sol_types::SolEvent;
 #[cfg_attr(any(test, feature = "arbitrary"), derive(arbitrary::Arbitrary))]
 #[cfg_attr(feature = "serde", derive(serde::Serialize))]
 #[cfg_attr(feature = "serde", serde(rename_all = "camelCase"))]
+#[cfg_attr(feature = "rkyv", derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize))]
 #[doc(alias = "TxReceipt")]
 pub struct TransactionReceipt<T = ReceiptEnvelope<Log>> {
     /// The receipt envelope, which contains the consensus receipt data.
