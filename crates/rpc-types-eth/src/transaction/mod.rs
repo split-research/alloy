@@ -52,7 +52,13 @@ pub mod serde_bincode_compat {
 #[cfg_attr(
     feature = "rkyv",
     derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize),
-    rkyv(derive(Debug))
+    rkyv(
+        derive(Debug),
+        archive_bounds(
+            T: rkyv::Archive,
+            <Recovered<T> as rkyv::Archive>::Archived: std::fmt::Debug
+        )
+    )
 )]
 #[doc(alias = "Tx")]
 pub struct Transaction<T = TxEnvelope> {

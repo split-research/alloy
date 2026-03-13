@@ -29,7 +29,13 @@ use core::fmt;
 #[cfg_attr(
     feature = "rkyv",
     derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize),
-    rkyv(derive(Debug))
+    rkyv(
+        derive(Debug),
+        archive_bounds(
+            T: rkyv::Archive,
+            <ReceiptWithBloom<Receipt<T>> as rkyv::Archive>::Archived: core::fmt::Debug,
+        )
+    )
 )]
 pub enum ReceiptEnvelope<T = Log> {
     /// Receipt envelope with no type flag.

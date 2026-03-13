@@ -23,7 +23,15 @@ pub use alloy_eips::{
 #[cfg_attr(
     feature = "rkyv",
     derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize),
-    rkyv(derive(Debug))
+    rkyv(
+        derive(Debug),
+        archive_bounds(
+            T: rkyv::Archive,
+            <BlockTransactions<T> as rkyv::Archive>::Archived: core::fmt::Debug,
+            H: rkyv::Archive,
+            H::Archived: core::fmt::Debug,
+        )
+    )
 )]
 pub struct Block<T = Transaction<TxEnvelope>, H = Header> {
     /// Header of the block.
@@ -387,7 +395,13 @@ where
 #[cfg_attr(
     feature = "rkyv",
     derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize),
-    rkyv(derive(Debug))
+    rkyv(
+        derive(Debug),
+        archive_bounds(
+            H: rkyv::Archive,
+            H::Archived: core::fmt::Debug,
+        )
+    )
 )]
 pub struct Header<H = alloy_consensus::Header> {
     /// Hash of the block

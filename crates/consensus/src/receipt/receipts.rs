@@ -20,7 +20,11 @@ use core::fmt;
 #[cfg_attr(
     feature = "rkyv",
     derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize),
-    rkyv(derive(Debug))
+    rkyv(
+        derive(Debug),
+        archive_bounds(T: rkyv::Archive, <Vec<T> as rkyv::Archive>::Archived: core::fmt::Debug)
+    )
+
 )]
 #[doc(alias = "TransactionReceipt", alias = "TxReceipt")]
 pub struct Receipt<T = Log> {
@@ -269,7 +273,10 @@ impl<T> Default for Receipts<T> {
 #[cfg_attr(
     feature = "rkyv",
     derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize),
-    rkyv(derive(Debug))
+    rkyv(
+        derive(Debug),
+        archive_bounds(T: rkyv::Archive, T::Archived: core::fmt::Debug)
+    )
 )]
 pub struct ReceiptWithBloom<T = Receipt<Log>> {
     #[cfg_attr(feature = "serde", serde(flatten))]

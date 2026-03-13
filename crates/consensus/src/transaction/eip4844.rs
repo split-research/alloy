@@ -31,7 +31,15 @@ use alloy_eips::eip7594::{BlobTransactionSidecarEip7594, BlobTransactionSidecarV
 #[cfg_attr(
     feature = "rkyv",
     derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize),
-    rkyv(derive(Debug))
+    rkyv(
+        derive(Debug),
+        archive_bounds(
+            T: rkyv::Archive,
+            T::Archived: core::fmt::Debug,
+            TxEip4844WithSidecar<T>: rkyv::Archive,
+            <TxEip4844WithSidecar<T> as rkyv::Archive>::Archived: core::fmt::Debug
+        )
+    )
 )]
 #[doc(alias = "Eip4844TransactionVariant")]
 pub enum TxEip4844Variant<T = BlobTransactionSidecarVariant> {
@@ -1061,7 +1069,10 @@ impl<T> From<TxEip4844WithSidecar<T>> for TxEip4844 {
 #[cfg_attr(
     feature = "rkyv",
     derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize),
-    rkyv(derive(Debug))
+    rkyv(
+        derive(Debug),
+        archive_bounds(T: rkyv::Archive, T::Archived: core::fmt::Debug)
+    )
 )]
 #[doc(alias = "Eip4844TransactionWithSidecar", alias = "Eip4844TxWithSidecar")]
 pub struct TxEip4844WithSidecar<T = BlobTransactionSidecarVariant> {

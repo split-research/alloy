@@ -10,7 +10,13 @@ use alloy_primitives::{Address, BlockHash, LogData, TxHash, B256};
 #[cfg_attr(
     feature = "rkyv",
     derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize),
-    rkyv(derive(Debug))
+    rkyv(
+        derive(Debug),
+        archive_bounds(
+            T: rkyv::Archive,
+            <alloy_primitives::Log<T> as rkyv::Archive>::Archived: core::fmt::Debug,
+        )
+    )
 )]
 pub struct Log<T = LogData> {
     #[cfg_attr(feature = "serde", serde(flatten))]

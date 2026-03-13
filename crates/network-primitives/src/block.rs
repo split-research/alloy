@@ -14,7 +14,13 @@ use core::slice;
 #[cfg_attr(
     feature = "rkyv",
     derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize),
-    rkyv(derive(Debug))
+    rkyv(
+        derive(Debug),
+        archive_bounds(
+            T: rkyv::Archive,
+            <Vec<T> as rkyv::Archive>::Archived: core::fmt::Debug,
+        )
+    )
 )]
 pub enum BlockTransactions<T> {
     /// Full transactions

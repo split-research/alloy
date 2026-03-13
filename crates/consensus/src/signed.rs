@@ -26,7 +26,16 @@ use std::sync::OnceLock;
 #[cfg_attr(
     feature = "rkyv",
     derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize),
-    rkyv(derive(Debug))
+    rkyv(
+        derive(Debug),
+        archive_bounds(
+            T: rkyv::Archive,
+            T::Archived: core::fmt::Debug,
+            Sig: rkyv::Archive,
+            Sig::Archived: core::fmt::Debug
+        )
+    )
+
 )]
 pub struct Signed<T, Sig = Signature> {
     #[doc(alias = "transaction")]

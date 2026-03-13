@@ -233,7 +233,13 @@ where
 #[cfg_attr(
     feature = "rkyv",
     derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize),
-    rkyv(derive(Debug))
+    rkyv(
+        derive(Debug),
+        archive_bounds(
+            T: rkyv::Archive, <std::vec::Vec<T> as rkyv::Archive>::Archived: core::fmt::Debug,
+            H: rkyv::Archive, <std::vec::Vec<H> as rkyv::Archive>::Archived: core::fmt::Debug
+        )
+    )
 )]
 #[rlp(trailing)]
 pub struct BlockBody<T, H = Header> {
