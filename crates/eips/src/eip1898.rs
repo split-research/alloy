@@ -96,6 +96,7 @@ impl fmt::Debug for RpcBlockHash {
 ///
 /// This enum allows users to specify a block in a flexible manner.
 #[derive(Clone, Copy, Default, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "rkyv", derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize))]
 pub enum BlockNumberOrTag {
     /// Latest block
     #[default]
