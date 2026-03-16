@@ -36,6 +36,7 @@ impl BlockWithParent {
 #[derive(Clone, Copy, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize))]
 #[cfg_attr(feature = "serde", serde(rename_all = "camelCase"))]
+#[cfg_attr(feature = "rkyv", derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize))]
 pub struct RpcBlockHash {
     /// A block hash
     pub block_hash: BlockHash,
@@ -415,6 +416,7 @@ impl core::error::Error for HexStringMissingPrefixError {}
 /// A Block Identifier.
 /// <https://github.com/ethereum/EIPs/blob/master/EIPS/eip-1898.md>
 #[derive(Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(feature = "rkyv", derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize))]
 pub enum BlockId {
     /// A block hash and an optional bool that defines if it's canonical
     Hash(RpcBlockHash),
