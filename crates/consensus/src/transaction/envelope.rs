@@ -1,3 +1,6 @@
+#[cfg(feature = "rkyv")]
+use std::fmt::Debug;
+
 use super::SignableTransaction;
 use crate::{
     error::ValueError,
@@ -835,6 +838,177 @@ impl<Eip4844: RlpEcdsaEncodableTx> EthereumTxEnvelope<Eip4844> {
             Self::Eip7702(t) => t.eip2718_encoded_length(),
         }
     }
+}
+
+#[cfg(feature = "rkyv")]
+impl<Eip4844> ArchivedEthereumTxEnvelope<Eip4844>
+where
+    Eip4844: rkyv::Archive + core::fmt::Debug,
+    Eip4844::Archived: core::fmt::Debug,
+{
+    /// Return the [`TxType`] of the inner txn.
+    #[doc(alias = "transaction_type")]
+    pub const fn tx_type(&self) -> TxType {
+        match self {
+            Self::Legacy(_) => TxType::Legacy,
+            Self::Eip2930(_) => TxType::Eip2930,
+            Self::Eip1559(_) => TxType::Eip1559,
+            Self::Eip4844(_) => TxType::Eip4844,
+            Self::Eip7702(_) => TxType::Eip7702,
+        }
+    }
+
+    /// Returns true if the transaction is a legacy transaction.
+    #[inline]
+    pub const fn is_legacy(&self) -> bool {
+        matches!(self, Self::Legacy(_))
+    }
+
+    /// Returns true if the transaction is an EIP-2930 transaction.
+    #[inline]
+    pub const fn is_eip2930(&self) -> bool {
+        matches!(self, Self::Eip2930(_))
+    }
+
+    /// Returns true if the transaction is an EIP-1559 transaction.
+    #[inline]
+    pub const fn is_eip1559(&self) -> bool {
+        matches!(self, Self::Eip1559(_))
+    }
+
+    /// Returns true if the transaction is an EIP-4844 transaction.
+    #[inline]
+    pub const fn is_eip4844(&self) -> bool {
+        matches!(self, Self::Eip4844(_))
+    }
+
+    /// Returns true if the transaction is an EIP-7702 transaction.
+    #[inline]
+    pub const fn is_eip7702(&self) -> bool {
+        matches!(self, Self::Eip7702(_))
+    }
+
+    /// Returns true if the transaction is replay protected.
+    ///
+    /// All non-legacy transactions are replay protected, as the chain id is
+    /// included in the transaction body. Legacy transactions are considered
+    /// replay protected if the `v` value is not 27 or 28, according to the
+    /// rules of [EIP-155].
+    ///
+    /// [EIP-155]: https://eips.ethereum.org/EIPS/eip-155
+    #[inline]
+    pub const fn is_replay_protected(&self) -> bool {
+        match self {
+            Self::Legacy(tx) => tx.tx().chain_id.as_ref().is_some(),
+            _ => true,
+        }
+    }
+
+    /// Returns the archived [`TxLegacy`] variant if the transaction is a legacy transaction.
+    pub const fn as_legacy(&self) -> Option<&<Signed<TxLegacy> as rkyv::Archive>::Archived> {
+        match self {
+            Self::Legacy(tx) => Some(tx),
+            _ => None,
+        }
+    }
+
+    /// Returns the archived [`TxEip2930`] variant if the transaction is an EIP-2930 transaction.
+    pub const fn as_eip2930(&self) -> Option<&<Signed<TxEip2930> as rkyv::Archive>::Archived> {
+        match self {
+            Self::Eip2930(tx) => Some(tx),
+            _ => None,
+        }
+    }
+
+    /// Returns the archived [`TxEip1559`] variant if the transaction is an EIP-1559 transaction.
+    pub const fn as_eip1559(&self) -> Option<&<Signed<TxEip1559> as rkyv::Archive>::Archived> {
+        match self {
+            Self::Eip1559(tx) => Some(tx),
+            _ => None,
+        }
+    }
+
+    /// Returns the archived [`Eip4844`] variant if the transaction is an EIP-4844 transaction.
+    pub const fn as_eip4844(&self) -> Option<&<Signed<Eip4844> as rkyv::Archive>::Archived> {
+        match self {
+            Self::Eip4844(tx) => Some(tx),
+            _ => None,
+        }
+    }
+
+    /// Returns the archived [`TxEip7702`] variant if the transaction is an EIP-7702 transaction.
+    pub const fn as_eip7702(&self) -> Option<&<Signed<TxEip7702> as rkyv::Archive>::Archived> {
+        match self {
+            Self::Eip7702(tx) => Some(tx),
+            _ => None,
+        }
+    }
+
+    /// Return the reference to signature.
+    pub const fn signature(&self) -> &<Signature as rkyv::Archive>::Archived {
+        match self {
+            Self::Legacy(tx) => tx.signature(),
+            Self::Eip2930(tx) => tx.signature(),
+            Self::Eip1559(tx) => tx.signature(),
+            Self::Eip4844(tx) => tx.signature(),
+            Self::Eip7702(tx) => tx.signature(),
+        }
+    }
+
+    /// Return the hash of the inner Signed.
+    #[doc(alias = "transaction_hash")]
+    pub fn tx_hash(&self) -> &<B256 as rkyv::Archive>::Archived {
+        match self {
+            Self::Legacy(tx) => tx.hash(),
+            Self::Eip2930(tx) => tx.hash(),
+            Self::Eip1559(tx) => tx.hash(),
+            Self::Eip4844(tx) => tx.hash(),
+            Self::Eip7702(tx) => tx.hash(),
+        }
+    }
+
+    /// Reference to transaction hash. Used to identify transaction.
+    pub fn hash(&self) -> &<B256 as rkyv::Archive>::Archived {
+        match self {
+            Self::Legacy(tx) => tx.hash(),
+            Self::Eip2930(tx) => tx.hash(),
+            Self::Eip1559(tx) => tx.hash(),
+            Self::Eip7702(tx) => tx.hash(),
+            Self::Eip4844(tx) => tx.hash(),
+        }
+    }
+
+    /// Returns the inner archived transaction.
+    pub const fn inner(&self) -> ArchivedEthereumTxEnvelopeInner<'_, Eip4844> {
+        match self {
+            Self::Legacy(tx) => ArchivedEthereumTxEnvelopeInner::Legacy(tx),
+            Self::Eip2930(tx) => ArchivedEthereumTxEnvelopeInner::Eip2930(tx),
+            Self::Eip1559(tx) => ArchivedEthereumTxEnvelopeInner::Eip1559(tx),
+            Self::Eip4844(tx) => ArchivedEthereumTxEnvelopeInner::Eip4844(tx),
+            Self::Eip7702(tx) => ArchivedEthereumTxEnvelopeInner::Eip7702(tx),
+        }
+    }
+}
+
+/// Helper enum for accessing inner archived transaction variants.
+#[cfg(feature = "rkyv")]
+#[derive(Debug)]
+#[allow(unnameable_types)]
+pub enum ArchivedEthereumTxEnvelopeInner<'a, Eip4844>
+where
+    Eip4844: rkyv::Archive + 'a,
+    Eip4844::Archived: Debug,
+{
+    /// Legacy transaction
+    Legacy(&'a <Signed<TxLegacy> as rkyv::Archive>::Archived),
+    /// EIP-2930 transaction
+    Eip2930(&'a <Signed<TxEip2930> as rkyv::Archive>::Archived),
+    /// EIP-1559 transaction
+    Eip1559(&'a <Signed<TxEip1559> as rkyv::Archive>::Archived),
+    /// EIP-4844 transaction
+    Eip4844(&'a <Signed<Eip4844> as rkyv::Archive>::Archived),
+    /// EIP-7702 transaction
+    Eip7702(&'a <Signed<TxEip7702> as rkyv::Archive>::Archived),
 }
 
 impl<Eip4844: RlpEcdsaEncodableTx> TxHashRef for EthereumTxEnvelope<Eip4844> {

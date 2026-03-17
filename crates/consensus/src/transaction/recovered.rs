@@ -198,6 +198,32 @@ impl<T> AsRef<Self> for Recovered<T> {
     }
 }
 
+#[cfg(feature = "rkyv")]
+impl<T> ArchivedRecovered<T>
+where
+    T: rkyv::Archive,
+    T::Archived: core::fmt::Debug,
+{
+    /// Signer of the object recovered from signature
+    pub fn signer(&self) -> Address {
+        rkyv::deserialize::<Address, rkyv::rancor::Error>(&self.signer).unwrap()
+    }
+
+    pub fn signer_ref(&self) -> &<Address as rkyv::Archive>::Archived {
+        &self.signer
+    }
+
+    /// Reference to the inner recovered object.
+    pub const fn inner(&self) -> &T::Archived {
+        &self.inner
+    }
+
+    /// Converts from `&ArchivedRecovered<T>` to `Recovered<&T::Archived>`.
+    pub fn as_recovered_ref(&self) -> Recovered<&T::Archived> {
+        Recovered { inner: &self.inner, signer: self.signer() }
+    }
+}
+
 /// A type that can recover the signer of a transaction.
 ///
 /// This is a helper trait that only provides the ability to recover the signer (address) of a

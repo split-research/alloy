@@ -238,6 +238,34 @@ where
     }
 }
 
+#[cfg(feature = "rkyv")]
+impl<T, Sig> ArchivedSigned<T, Sig>
+where
+    T: rkyv::Archive,
+    T::Archived: core::fmt::Debug,
+    Sig: rkyv::Archive,
+    Sig::Archived: core::fmt::Debug,
+{
+    /// Returns a reference to the transaction.
+    #[doc(alias = "transaction")]
+    pub const fn tx(&self) -> &T::Archived {
+        &self.tx
+    }
+
+    /// Returns a reference to the signature.
+    pub const fn signature(&self) -> &Sig::Archived {
+        &self.signature
+    }
+
+    /// Returns a reference to the transaction hash.
+    #[doc(alias = "tx_hash", alias = "transaction_hash")]
+    pub fn hash(&self) -> &<B256 as rkyv::Archive>::Archived {
+        // The hash is archived as Option<B256> due to ArchiveOnceLockAsOption
+        // During archiving, the value is extracted from OnceLock and stored as Option
+        self.hash.as_ref().expect("hash should be present")
+    }
+}
+
 impl<T, Sig> Hash for Signed<T, Sig>
 where
     T: TxHashable<Sig> + Hash,
