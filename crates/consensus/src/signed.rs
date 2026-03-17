@@ -42,7 +42,7 @@ pub struct Signed<T, Sig = Signature> {
     tx: T,
     signature: Sig,
     #[doc(alias = "tx_hash", alias = "transaction_hash")]
-    #[cfg_attr(feature = "rkyv", rkyv(with = rkyv_util::ArchiveOnceLockAsOption))]
+    #[cfg_attr(feature = "rkyv", rkyv(with = crate::rkyv::ArchiveOnceLockAsOption))]
     hash: OnceLock<B256>,
 }
 
@@ -616,71 +616,6 @@ mod serde {
                     value.hash.into_owned(),
                 )
             })
-        }
-    }
-}
-
-#[cfg(feature = "rkyv")]
-mod rkyv_util {
-    use super::*;
-    use rkyv::{
-        rancor::Fallible,
-        with::{ArchiveWith, DeserializeWith, SerializeWith},
-        Archive, Serialize,
-    };
-
-    /// Rkyv wrapper to archive an `OnceLock<B256>` as an `Option<B256>`.
-    ///
-    /// During archiving, we extract the hash value from the OnceLock (computing it if needed for
-    /// types that implement TxHashable). During deserialization, we reconstruct the OnceLock
-    /// with the hash value pre-populated.
-    #[derive(Debug)]
-    pub(crate) struct ArchiveOnceLockAsOption;
-
-    impl ArchiveWith<OnceLock<B256>> for ArchiveOnceLockAsOption {
-        type Archived = <Option<B256> as Archive>::Archived;
-        type Resolver = <Option<B256> as Archive>::Resolver;
-
-        fn resolve_with(
-            field: &OnceLock<B256>,
-            resolver: Self::Resolver,
-            out: rkyv::Place<Self::Archived>,
-        ) {
-            // Get the value from OnceLock, which should already be initialized
-            let value = field.get().copied();
-            Archive::resolve(&value, resolver, out);
-        }
-    }
-
-    impl<S> SerializeWith<OnceLock<B256>, S> for ArchiveOnceLockAsOption
-    where
-        S: Fallible + rkyv::ser::Writer + ?Sized,
-    {
-        fn serialize_with(
-            field: &OnceLock<B256>,
-            serializer: &mut S,
-        ) -> Result<Self::Resolver, S::Error> {
-            // Get the value from OnceLock
-            let value = field.get().copied();
-            Serialize::serialize(&value, serializer)
-        }
-    }
-
-    impl<D> DeserializeWith<rkyv::Archived<Option<B256>>, OnceLock<B256>, D> for ArchiveOnceLockAsOption
-    where
-        D: Fallible + ?Sized,
-    {
-        fn deserialize_with(
-            field: &rkyv::Archived<Option<B256>>,
-            deserializer: &mut D,
-        ) -> Result<OnceLock<B256>, D::Error> {
-            use rkyv::Deserialize;
-            let value: Option<B256> = field.deserialize(deserializer)?;
-            let lock = OnceLock::new();
-            if let Some(hash) = value {
-                lock.get_or_init(|| hash);
-            }
-            Ok(lock)
         }
     }
 }

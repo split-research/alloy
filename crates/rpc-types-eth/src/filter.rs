@@ -19,11 +19,25 @@ use itertools::{
 #[derive(Clone, Debug, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "serde", serde(from = "HashSet<T>"))]
+#[cfg_attr(
+    feature = "rkyv",
+    derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize),
+    rkyv(derive(Debug),
+    archive_bounds(
+        T: rkyv::Archive,
+        <HashSet<T> as rkyv::Archive>::Archived: core::fmt::Debug,
+
+    )))
+]
 pub struct FilterSet<T: Eq + Hash> {
     set: HashSet<T>,
 
     #[cfg(feature = "std")]
     #[cfg_attr(feature = "serde", serde(skip, default))]
+    #[cfg_attr(
+        feature = "rkyv",
+        rkyv(with = alloy_consensus::rkyv::ArchiveOnceLockAsOption)
+    )]
     bloom_filter: std::sync::OnceLock<BloomFilter>,
 }
 
@@ -254,6 +268,11 @@ pub enum FilterBlockError {
 
 /// Represents the target range of blocks for the filter
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+#[cfg_attr(
+    feature = "rkyv",
+    derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize),
+    rkyv(derive(Debug))
+)]
 pub enum FilterBlockOption {
     /// Represents a range of blocks with optional from and to blocks
     ///
@@ -400,6 +419,11 @@ impl Default for FilterBlockOption {
 
 /// Filter for logs.
 #[derive(Clone, Debug, Default, PartialEq, Eq, Hash)]
+#[cfg_attr(
+    feature = "rkyv",
+    derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize),
+    rkyv(derive(Debug))
+)]
 pub struct Filter {
     /// Filter block options, specifying on which blocks the filter should match.
     // https://eips.ethereum.org/EIPS/eip-234
@@ -1406,6 +1430,11 @@ impl<'a> serde::Deserialize<'a> for PendingTransactionFilterKind {
 
 /// Helper type to represent a bloom filter used for matching logs.
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
+#[cfg_attr(
+    feature = "rkyv",
+    derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize),
+    rkyv(derive(Debug))
+)]
 pub struct BloomFilter(Vec<Bloom>);
 
 impl From<Vec<Bloom>> for BloomFilter {
