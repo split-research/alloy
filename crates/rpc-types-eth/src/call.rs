@@ -58,6 +58,11 @@ pub struct StateContext {
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "serde", serde(rename_all = "camelCase"))]
+#[cfg_attr(
+    feature = "rkyv",
+    derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize),
+    rkyv(derive(Debug))
+)]
 pub struct EthCallResponse {
     /// eth_call output (if no error)
     #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
