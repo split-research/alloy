@@ -666,6 +666,11 @@ impl From<Header> for alloy_serde::WithOtherFields<Header> {
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "serde", serde(default, rename_all = "camelCase"))]
+#[cfg_attr(
+    feature = "rkyv",
+    derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize),
+    rkyv(derive(Debug))
+)]
 pub struct BlockOverrides {
     /// Overrides the block number.
     ///

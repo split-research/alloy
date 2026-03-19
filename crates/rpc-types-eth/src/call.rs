@@ -9,6 +9,16 @@ use alloy_primitives::Bytes;
 #[derive(Clone, Debug, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "serde", serde(rename_all = "camelCase"))]
+#[cfg_attr(
+    feature = "rkyv",
+    derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize),
+    rkyv(
+        derive(Debug),
+        archive_bounds(
+            <Vec<TxReq> as rkyv::Archive>::Archived: std::fmt::Debug,
+        )
+    )
+)]
 pub struct Bundle<TxReq = TransactionRequest> {
     /// All transactions to execute
     pub transactions: Vec<TxReq>,
